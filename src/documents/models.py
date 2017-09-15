@@ -211,8 +211,13 @@ class Document(models.Model):
     modified = models.DateTimeField(
         auto_now=True, editable=False, db_index=True)
 
+    foldernumber = models.IntegerField(default=1, db_index=True)    
+    filenumber = models.IntegerField(default=1, db_index=True)
+
+
     class Meta(object):
         ordering = ("correspondent", "title")
+        unique_together = ('foldernumber', 'filenumber')
 
     def __str__(self):
         created = self.created.strftime("%Y%m%d%H%M%S")

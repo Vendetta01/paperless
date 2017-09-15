@@ -1,0 +1,6 @@
+TODO:
+- Implement preprocess parser that does certain stuff (maybe generic, maybe just what i want)
+- consumer.py has to be changed: if parser == preprocess, then pared_document.cleanup() and self._cleanup_doc to remove document without storing
+- workflow: preprocess converts all document to searchable pdfs (except those with real text inside), copies new file into onsumption dir and then the textonlypdf_parser can do the rest.
+- maybe add further parsing for e.g. date and title inside pdf
+- add filenumber and foldernumber to document model

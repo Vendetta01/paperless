@@ -39,7 +39,7 @@ class RasterisedDocumentParser(DocumentParser):
 
         run_convert(
             self.CONVERT,
-            "-scale", "500x5000",
+            "-scale", "500x500",
             "-alpha", "remove",
             self.document_path, os.path.join(self.tempdir, "convert-%04d.png")
         )
