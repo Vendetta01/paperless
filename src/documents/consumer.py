@@ -16,6 +16,7 @@ from .signals import (
     document_consumption_finished,
     document_consumption_started
 )
+from paperless_preprocess.parsers import PreprocessDocumentParser
 
 
 class ConsumerError(Exception):
@@ -117,6 +118,32 @@ class Consumer(object):
             )
 
             parsed_document = parser_class(doc)
+            
+
+            # Check for preprocess parser. If used do not store file
+            if (type(parsed_document) is PreprocessDocumentParser):
+                self.log(
+                    "info",
+                    "consumer: preprocessing..."
+                )
+                parsed_document.preprocess()
+                
+                parsed_document.cleanup()
+                self._cleanup_doc(doc)
+
+                self.log(
+                    "info",
+                    "Document {} preprocess consumption finished".format(doc)
+                )
+
+                #document_consumption_finished.send(
+                #    sender=self.__class__,
+                #    document=document,
+                #    logging_group=self.logging_group
+                #)
+                continue
+            
+            
             thumbnail = parsed_document.get_thumbnail()
 
             try:
@@ -184,6 +211,13 @@ class Consumer(object):
 
         created = file_info.created or timezone.make_aware(
                     datetime.datetime.fromtimestamp(stats.st_mtime))
+        
+        # Always insert into folder 1 at first
+        # TODO: At some point do something intelligent here,
+        # maybe check for "suitable" folder according to tags and stuff
+        foldernumber = 1
+        filenumber = Document.objects.latest('filenumber').filenumber+1
+
 
         with open(doc, "rb") as f:
             document = Document.objects.create(
@@ -193,7 +227,9 @@ class Consumer(object):
                 file_type=file_info.extension,
                 checksum=hashlib.md5(f.read()).hexdigest(),
                 created=created,
-                modified=created
+                modified=created,
+                foldernumber=foldernumber,
+                filenumber=filenumber
             )
 
         relevant_tags = set(list(Tag.match_all(text)) + list(file_info.tags))

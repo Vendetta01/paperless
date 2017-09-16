@@ -1,10 +1,8 @@
-#import os
-#import re
+import os
 import subprocess
 
 from django.conf import settings
-#from documents.parsers import DocumentParser, ParseError
-#from PIL import Image
+from documents.parsers import DocumentParser, ParseError
 from .pdftextract import PDFTextract
 
 

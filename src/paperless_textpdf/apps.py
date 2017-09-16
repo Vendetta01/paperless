@@ -1,7 +1,7 @@
 from django.apps import AppConfig
 
 
-class TextPDFConfig(AppConfig):
+class PaperlessTextPDFConfig(AppConfig):
 
     name = "paperless_textpdf"
 

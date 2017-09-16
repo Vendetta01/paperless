@@ -1,0 +1,10 @@
+TODO:
+-> Make preprocess high priority but let it ignore all *.preprocessed.*
+-> Maybe add further parsing for e.g. date and title inside pdf
+-> At some point do something intelligent to determine file and folder number
+   maybe check for "suitable" folder according to tags and stuff
+-> Write usefull tests!
+-> Add config option to choose which image format is used for tesseract
+   (right now tiff)
+-> Make util class and move e.g. strip_whitespace... into it
+-> Add get_latest-buttons to file and foldernumber fields in editing view

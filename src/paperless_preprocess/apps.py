@@ -1,9 +1,9 @@
 from django.apps import AppConfig
 
 
-class TextPDFConfig(AppConfig):
+class PaperlessPreprocessConfig(AppConfig):
 
-    name = "paperless_textpdf"
+    name = "paperless_preprocess"
 
     def ready(self):
 

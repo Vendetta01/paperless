@@ -5,6 +5,7 @@ from .parsers import RasterisedDocumentParser
 
 class ConsumerDeclaration(object):
 
+    MATCHING_FILES_FORCE_PARSER = re.compile("^.*\.rasterised\.(pdf|jpg|gif|png|tiff?|pnm|bmp)$")
     MATCHING_FILES = re.compile("^.*\.(pdf|jpg|gif|png|tiff?|pnm|bmp)$")
 
     @classmethod
@@ -13,7 +14,14 @@ class ConsumerDeclaration(object):
 
     @classmethod
     def test(cls, doc):
-
+        # First check if file name contains rasterised, then overrule
+        # all other parsers and force the use of this one
+        if cls.MATCHING_FILES_FORCE_PARSER.match(doc.lower()):
+            return {
+                "parser": RasterisedDocumentParser,
+                "weight": 100
+            }
+        
         if cls.MATCHING_FILES.match(doc.lower()):
             return {
                 "parser": RasterisedDocumentParser,
