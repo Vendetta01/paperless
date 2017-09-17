@@ -216,7 +216,10 @@ class Consumer(object):
         # TODO: At some point do something intelligent here,
         # maybe check for "suitable" folder according to tags and stuff
         foldernumber = 1
-        filenumber = Document.objects.latest('filenumber').filenumber+1
+        try:
+            filenumber = Document.objects.latest('filenumber').filenumber+1
+        except:
+            filenumber = 1
 
 
         with open(doc, "rb") as f:
