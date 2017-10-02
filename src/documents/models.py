@@ -265,6 +265,15 @@ class Document(models.Model):
     @property
     def thumbnail_url(self):
         return reverse("fetch", kwargs={"kind": "thumb", "pk": self.pk})
+    
+    @staticmethod
+    def get_next_free_fn(foldernumber):
+        next_free_fn = 1
+        try:
+            next_free_fn = Document.objects.filter(foldernumber=foldernumber).latest('filenumber').filenumber+1
+        except Exception as e:
+            next_free_fn = 1
+        return next_free_fn
 
 
 class Log(models.Model):

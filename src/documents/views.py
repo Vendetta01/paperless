@@ -125,6 +125,15 @@ class DocumentViewSet(RetrieveModelMixin,
     search_fields = ("title", "correspondent__name", "content")
     ordering_fields = (
         "id", "title", "correspondent__name", "created", "modified")
+    
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super(Document, self).get_context_data(**kwargs)
+        # Add next free file number of current folder
+        cur_folder = Document.objects.get(pk=self.pk).foldernumber
+        context['next_free_filenum'] = Documents.objects.filter(foldernumber=cur_folder).latest('filenumber').filenumber+1
+        print("DocumentViewSet: context: {}".format(context))
+        return context
 
 
 class LogViewSet(ReadOnlyModelViewSet):

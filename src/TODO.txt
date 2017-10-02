@@ -7,4 +7,4 @@ TODO:
 -> Add config option to choose which image format is used for tesseract
    (right now tiff)
 -> Make util class and move e.g. strip_whitespace... into it
--> Add get_latest-buttons to file and foldernumber fields in editing view
+-> Determine which filenumbers are not used (for now the highest free filenumber is shown in help_text)

@@ -217,7 +217,7 @@ class Consumer(object):
         # maybe check for "suitable" folder according to tags and stuff
         foldernumber = 1
         try:
-            filenumber = Document.objects.latest('filenumber').filenumber+1
+            filenumber = Document.objects.filter(foldernumber=foldernumber).latest('filenumber').filenumber+1
         except:
             filenumber = 1
 
