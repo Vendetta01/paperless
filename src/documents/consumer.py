@@ -212,10 +212,13 @@ class Consumer(object):
         created = file_info.created or timezone.make_aware(
                     datetime.datetime.fromtimestamp(stats.st_mtime))
         
-        # Always insert into folder 1 at first
-        # TODO: At some point do something intelligent here,
+        # Always insert into latest folder (folder with highest number)
+        # TODO: At some point do something more intelligent here,
         # maybe check for "suitable" folder according to tags and stuff
-        foldernumber = 1
+        try:
+            foldernumber = Document.objects.latest('foldernumber').foldernumber
+        except:
+            foldernumber = 1
         try:
             filenumber = Document.objects.filter(foldernumber=foldernumber).latest('filenumber').filenumber+1
         except:
