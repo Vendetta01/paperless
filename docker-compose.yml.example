@@ -17,7 +17,7 @@ services:
         # value with nothing.
         environment:
             - PAPERLESS_OCR_LANGUAGES=
-        command: ["runserver", "0.0.0.0:8000"]
+        command: ["runserver", "--insecure", "0.0.0.0:8000"]
 
     consumer:
         image: pitkley/paperless
@@ -26,7 +26,7 @@ services:
             - media:/usr/src/paperless/media
             # You have to adapt the local path you want the consumption
             # directory to mount to by modifying the part before the ':'.
-            - /path/to/arbitrary/place:/consume
+            - ./consume:/consume
             # Likewise, you can add a local path to mount a directory for
             # exporting. This is not strictly needed for paperless to
             # function, only if you're exporting your files: uncomment
