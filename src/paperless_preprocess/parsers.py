@@ -221,7 +221,7 @@ def image_to_pdf(args):
     with Image.open(os.path.join(PreprocessDocumentParser.SCRATCH, img)) as f:
         if ocr.can_detect_orientation():
             try:
-                orientation = ocr.detect_orientation(f, lang=lang)
+                orientation = ocr.detect_orientation(f, lang='osd')
                 f = f.rotate(orientation["angle"], expand=1)
             except (TesseractError, OtherTesseractError):
                 pass
@@ -231,7 +231,7 @@ def image_to_pdf(args):
 
 def image_to_string(args):
     img, lang = args
-        
+    
     ocr = pyocr.get_available_tools()[0]
     for i in range(0, len(pyocr.get_available_tools())):
         if (pyocr.get_available_tools()[i].get_name() == 'Tesseract (C-API)'):
@@ -241,90 +241,11 @@ def image_to_string(args):
     with Image.open(os.path.join(PreprocessDocumentParser.SCRATCH, img)) as f:
         if ocr.can_detect_orientation():
             try:
-                orientation = ocr.detect_orientation(f, lang=lang)
+                orientation = ocr.detect_orientation(f, lang='osd')
                 f = f.rotate(orientation["angle"], expand=1)
             except (TesseractError, OtherTesseractError):
                 pass
         return ocr.image_to_string(f, lang=lang)
-
-
-#    def _get_ocr(self, imgs):
-#        """
-#        Attempts to do the best job possible OCR'ing the document based on
-#        simple language detection trial & error.
-#        """
-#
-#        if not imgs:
-#            raise OCRError("No images found")
-#
-#        self.log("info", "OCRing the document")
-#
-#        # Since the division gets rounded down by int, this calculation works
-#        # for every edge-case, i.e. 1
-#        middle = int(len(imgs) / 2)
-#        raw_text = self._ocr([imgs[middle]], self.DEFAULT_OCR_LANGUAGE)
-#
-#        guessed_language = self._guess_language(raw_text)
-#
-#        if not guessed_language or guessed_language not in ISO639:
-#            self.log("warning", "Language detection failed!")
-#            if settings.FORGIVING_OCR:
-#                self.log(
-#                    "warning",
-#                    "As FORGIVING_OCR is enabled, we're going to make the "
-#                    "best with what we have."
-#                )
-#                raw_text = self._assemble_ocr_sections(imgs, middle, raw_text)
-#                return raw_text
-#            raise OCRError("Language detection failed")
-#
-#        if ISO639[guessed_language] == self.DEFAULT_OCR_LANGUAGE:
-#            raw_text = self._assemble_ocr_sections(imgs, middle, raw_text)
-#            return raw_text
-#
-#        try:
-#            return self._ocr(imgs, ISO639[guessed_language])
-#        except pyocr.pyocr.tesseract.TesseractError:
-#            if settings.FORGIVING_OCR:
-#                self.log(
-#                    "warning",
-#                    "OCR for {} failed, but we're going to stick with what "
-#                    "we've got since FORGIVING_OCR is enabled.".format(
-#                        guessed_language
-#                    )
-#                )
-#                raw_text = self._assemble_ocr_sections(imgs, middle, raw_text)
-#                return raw_text
-#            raise OCRError(
-#                "The guessed language is not available in this instance of "
-#                "Tesseract."
-#            )
-#
-#    def _ocr(self, imgs, lang):
-#        """
-#        Performs a single OCR attempt.
-#        """
-#
-#        if not imgs:
-#            return ""
-#
-#        self.log("info", "Parsing for {}".format(lang))
-#
-#        with Pool(processes=self.THREADS) as pool:
-#            r = pool.map(image_to_string, itertools.product(imgs, [lang]))
-#            r = " ".join(r)
-#
-#        # Strip out excess white space to allow matching to go smoother
-#        return strip_excess_whitespace(r)
-#
-#    def _assemble_ocr_sections(self, imgs, middle, text):
-#        """
-#        Given a `middle` value and the text that middle page represents, we OCR
-#        the remainder of the document and return the whole thing.
-#        """
-#        text = self._ocr(imgs[:middle], self.DEFAULT_OCR_LANGUAGE) + text
-#        text += self._ocr(imgs[middle + 1:], self.DEFAULT_OCR_LANGUAGE)
-#        return text
 
 
 def run_convert(*args):
@@ -336,40 +257,5 @@ def run_convert(*args):
         environment["MAGICK_TMPDIR"] = settings.CONVERT_TMPDIR
 
     subprocess.Popen(args, env=environment).wait()
-
-
-#def run_unpaper(args):
-#    unpaper, pnm = args
-#    subprocess.Popen(
-#        (unpaper, pnm, pnm.replace(".pnm", ".unpaper.pnm"))).wait()
-
-
-#def strip_excess_whitespace(text):
-#    collapsed_spaces = re.sub(r"([^\S\r\n]+)", " ", text)
-#    no_leading_whitespace = re.sub(
-#        "([\n\r]+)([^\S\n\r]+)", '\\1', collapsed_spaces)
-#    no_trailing_whitespace = re.sub("([^\S\n\r]+)$", '', no_leading_whitespace)
-#    return no_trailing_whitespace
-
-
-#def image_to_string(args):
-#    img, lang = args
-#    
-#    ocr = pyocr.get_available_tools()[0]
-#    for i in range(0, len(pyocr.get_available_tools())):
-#        if (pyocr.get_available_tools()[i].get_name() == 'Tesseract (C-API)'):
-#            ocr = pyocr.get_available_tools()[i]
-#            break
-#
-#    with Image.open(os.path.join(PreprocessDocumentParser.SCRATCH, img)) as f:
-#        if ocr.can_detect_orientation():
-#            try:
-#                orientation = ocr.detect_orientation(f, lang=lang)
-#                f = f.rotate(orientation["angle"], expand=1)
-#            except (TesseractError, OtherTesseractError):
-#                pass
-#        return ocr.image_to_string(f, lang=lang)
-
-
 
 

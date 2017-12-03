@@ -1,11 +1,17 @@
-
+import os
+import shutil
+import six
+from tempfile import mkdtemp
 import re
-import textract
+
+from .exceptions import UnknownMethod, ShellError
+from .utils import ShellParser
 
 
 class PDFTextract():
     def getText(self, fname, rawtext=False):
-        text = textract.process(fname).decode('utf-8')
+        parser = Parser()
+        text = parser.process(fname, 'utf_8').decode('utf-8')
 
         if (rawtext):
             return text
@@ -28,3 +34,15 @@ class PDFTextract():
         no_trailing_whitespace = re.sub("([^\S\n\r]+)$", '', no_leading_whitespace)
         return no_trailing_whitespace
 
+
+
+class Parser(ShellParser):
+    """
+    Extract text from pdf files using the``pdftotext`` method
+    """
+
+    def extract(self, filename):
+        """Extract text from pdfs using the pdftotext command line utility."""
+        args = ['pdftotext', filename, '-']
+        stdout, _ = self.run(args)
+        return stdout

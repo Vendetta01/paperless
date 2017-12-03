@@ -8,15 +8,14 @@ djangorestframework>=3.5.3
 filemagic>=1.6
 fuzzywuzzy[speedup]==0.15.0
 langdetect>=1.0.7
-#pyocr>=0.4.7
--e git+https://github.com/openpaperwork/pyocr#egg=pyocr
+https://github.com/openpaperwork/pyocr/zipball/30182d153535489588fec630f0c533f49334e4b2#egg=pyocr
 python-dateutil>=2.6.0
 python-dotenv>=0.6.2
 python-gnupg>=0.3.9
 pytz>=2016.10
 gunicorn==19.7.1
-#textract>=1.6.0
--e git+https://github.com/deanmalmgren/textract.git#egg=textract
+chardet==3.0.4
+PyPDF2==1.26.0
 
 # For the tests
 factory-boy

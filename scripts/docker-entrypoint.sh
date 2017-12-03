@@ -56,25 +56,12 @@ install_languages() {
         return
     fi
 
-    # Update apt-lists
-    apt-get update
-
     # Loop over languages to be installed
+    # Simply download directly from github
     for lang in "${langs[@]}"; do
-        pkg="tesseract-ocr-$lang"
-        if dpkg -s "$pkg" > /dev/null 2>&1; then
-            continue
-        fi
-
-        if ! apt-cache show "$pkg" > /dev/null 2>&1; then
-            continue
-        fi
-
-        apt-get install "$pkg"
+        wget -P /usr/share/tessdata/ https://github.com/tesseract-ocr/tessdata_fast/raw/master/${lang}.traineddata
+        cp /usr/share/tessdata/${lang}.traineddata /usr/share/
     done
-
-    # Remove apt lists
-    rm -rf /var/lib/apt/lists/*
 }
 
 
