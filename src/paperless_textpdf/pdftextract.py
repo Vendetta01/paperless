@@ -43,6 +43,6 @@ class Parser(ShellParser):
 
     def extract(self, filename):
         """Extract text from pdfs using the pdftotext command line utility."""
-        args = ['pdftotext', filename, '-']
+        args = ['pdftotext', '-raw', filename, '-']
         stdout, _ = self.run(args)
         return stdout

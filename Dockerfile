@@ -1,34 +1,37 @@
-FROM ubuntu:17.10
+FROM alpine:edge
 
+
+
+ENV TESSERACT_GIT_COMMIT eba0ae3b88a46a93e981770caa0b148d65cc4468
 
 ##############################
 # Install necessary software
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends build-essential python3.6 \
-      python3.6-dev python3-pip python3-venv python3-setuptools git wget sudo \
-      imagemagick ghostscript poppler-utils software-properties-common unpaper \
-      libmagic-dev libleptonica-dev g++ autoconf automake libtool pkg-config \
-      autoconf-archive libpng-dev libjpeg8-dev libtiff5-dev zlib1g-dev && \
-    rm -rf /var/lib/apt/lists/*
+COPY requirements.txt /usr/src/paperless/
 
-
-##############################
-# Install tessetact4 from git
-ENV TESSERACT_GIT_COMMIT eba0ae3b88a46a93e981770caa0b148d65cc4468
-RUN cd /tmp/ && \
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
+    apk add --no-cache --virtual .build-deps python3-dev build-base git sudo \
+      libmagic leptonica-dev libpng-dev libjpeg tiff-dev zlib-dev \
+      autoconf autoconf-archive automake libtool pkgconf gnupg file && \
+    cd /tmp/ && \
     git clone https://github.com/tesseract-ocr/tesseract.git tesseract-ocr && \
     cd tesseract-ocr && \
     git checkout $TESSERACT_GIT_COMMIT && \
     ./autogen.sh && \
-    ./configure --prefix=/usr/ && \
+    ./configure --prefix=/usr/ --datadir=/usr/share/tessdata/ && \
     make && \
     make install && \
-    ldconfig && \
     cd /usr/share/tessdata/ && \
+    mv tessdata/* ./ && \
+    rm -rf tessdata && \
     wget https://github.com/tesseract-ocr/tessdata_fast/raw/master/eng.traineddata && \
     wget https://github.com/tesseract-ocr/tessdata_fast/raw/master/osd.traineddata && \
-    cp -r * ../ && \
-    rm -rf /tmp/tesseract-ocr/
+    rm -rf /tmp/tesseract-ocr/ && \
+    cd /usr/src/paperless && \
+    pip3 install --no-cache-dir -r requirements.txt && \
+    apk del .build-deps && \
+    apk add --no-cache python3 sudo imagemagick ghostscript gnupg bash rsync sqlite \
+      poppler-utils unpaper libmagic leptonica libpng libjpeg tiff zlib
+
 
 
 ENV PAPERLESS_CONSUMPTION_DIR /consume
@@ -36,18 +39,13 @@ ENV PAPERLESS_EXPORT_DIR /export
 
 
 ##############################
-# Install python depedencies
-WORKDIR /usr/src/paperless
-COPY requirements.txt /usr/src/paperless/
-RUN pip3 install --no-cache-dir -r requirements.txt
-
-
-##############################
 # Create directories and copy application
 RUN mkdir -p /usr/src/paperless/src && \
     mkdir -p /usr/src/paperless/data && \
     mkdir -p /usr/src/paperless/media && \
-    mkdir -p /usr/src/paperless/scripts
+    mkdir -p /usr/src/paperless/scripts && \
+    mkdir -p /usr/src/paperless/backup/data && \
+    mkdir -p /usr/src/paperless/backup/media
 COPY src/ /usr/src/paperless/src/
 COPY data/ /usr/src/paperless/data/
 COPY media/ /usr/src/paperless/media/
@@ -67,9 +65,9 @@ RUN (cd /usr/src/paperless/src && ./manage.py migrate)
 
 ##############################
 # Create user
-RUN groupadd -g 1000 paperless \
-    && useradd -u 1000 -g 1000 -d /usr/src/paperless paperless \
-    && chown -Rh paperless:paperless /usr/src/paperless
+RUN addgroup -g 1000 paperless
+RUN adduser -u 1000 -G paperless -h /usr/src/paperless -D paperless
+RUN chown -Rh paperless:paperless /usr/src/paperless
 
 
 ##############################

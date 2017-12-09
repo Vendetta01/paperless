@@ -59,8 +59,9 @@ install_languages() {
     # Loop over languages to be installed
     # Simply download directly from github
     for lang in "${langs[@]}"; do
-        wget -P /usr/share/tessdata/ https://github.com/tesseract-ocr/tessdata_fast/raw/master/${lang}.traineddata
-        cp /usr/share/tessdata/${lang}.traineddata /usr/share/
+        if [[ ! -e /usr/share/tessdata/${lang}.traineddata ]]; then
+          wget -P /usr/share/tessdata/ https://github.com/tesseract-ocr/tessdata_fast/raw/master/${lang}.traineddata
+        fi
     done
 }
 

@@ -2,7 +2,7 @@ version: '2'
 
 services:
     webserver:
-        image: npodewitz/paperless:1.0
+        image: npodewitz/paperless:1.1
         ports:
             # You can adapt the port you want Paperless to listen on by
             # modifying the part before the `:`.
@@ -10,6 +10,10 @@ services:
         volumes:
             - data:/usr/src/paperless/data
             - media:/usr/src/paperless/media
+            # --------------------------------------------------------
+            # Bind host folders for backup of db and files
+            - /tmp/paperless_backup_test/data:/usr/src/paperless/backup/data
+            - /tmp/paperless_backup_test/media:/usr/src/paperless/backup/media
         env_file: docker-compose.env
         # The reason the line is here is so that the webserver that doesn't do
         # any text recognition and doesn't have to install unnecessary
@@ -20,7 +24,7 @@ services:
         command: ["runserver", "--insecure", "0.0.0.0:8000"]
 
     consumer:
-        image: npodewitz/paperless:1.0
+        image: npodewitz/paperless:1.1
         volumes:
             - data:/usr/src/paperless/data
             - media:/usr/src/paperless/media
