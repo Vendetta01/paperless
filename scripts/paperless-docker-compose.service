@@ -1,0 +1,20 @@
+[Unit]
+Description=Docker compose container starter for paperless
+After=docker.service network-online.target
+Requires=docker.service network-online.target
+
+[Service]
+WorkingDirectory=/opt/paperless
+Type=simple
+#RemainAfterExit=yes
+
+#ExecStartPre=/usr/bin/docker-compose pull --quiet --parallel
+ExecStart=/usr/bin/docker-compose up
+
+ExecStop=/usr/bin/docker-compose down
+
+#aExecReload=/usr/bin/docker-compose pull --quiet --parallel
+ExecReload=/usr/bin/docker-compose up
+
+[Install]
+WantedBy=multi-user.target

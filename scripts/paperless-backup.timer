@@ -1,0 +1,12 @@
+[Unit]
+Descriptiopn=Daily backup of paperless data
+RefuseManualStart=no
+RefuseManualStop=no
+
+[Timer]
+OnCalendar=*-*-* 08:00:00
+Persistent=true
+Unit=paperless-backup.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,8 @@
+[Unit]
+Description=Backup of paperless data from docker container to nas
+RefuseManualStart=no
+RefuseManualStop=yes
+
+[Service]
+Type=oneshot
+ExecStart=/opt/paperless/scripts/run_backup.sh
