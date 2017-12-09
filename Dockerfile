@@ -30,7 +30,7 @@ RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/reposit
     pip3 install --no-cache-dir -r requirements.txt && \
     apk del .build-deps && \
     apk add --no-cache python3 sudo imagemagick ghostscript gnupg bash rsync sqlite \
-      poppler-utils unpaper libmagic leptonica libpng libjpeg tiff zlib
+      poppler-utils unpaper libmagic leptonica libpng libjpeg tiff zlib shadow
 
 
 
@@ -65,8 +65,8 @@ RUN (cd /usr/src/paperless/src && ./manage.py migrate)
 
 ##############################
 # Create user
-RUN addgroup -g 1000 paperless
-RUN adduser -u 1000 -G paperless -h /usr/src/paperless -D paperless
+RUN groupadd -g 1000 paperless
+RUN useradd -u 1000 -g paperless -d /usr/src/paperless paperless
 RUN chown -Rh paperless:paperless /usr/src/paperless
 
 
