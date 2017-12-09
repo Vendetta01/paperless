@@ -72,8 +72,10 @@ RUN chown -Rh paperless:paperless /usr/src/paperless
 
 ##############################
 # Setup entrypoint
-RUN cp /usr/src/paperless/scripts/docker-entrypoint.sh /sbin/docker-entrypoint.sh \
-    && chmod 755 /sbin/docker-entrypoint.sh
+RUN cp /usr/src/paperless/scripts/docker-entrypoint.sh /sbin/docker-entrypoint.sh && \
+    chmod 755 /sbin/docker-entrypoint.sh &&\
+    cp /usr/src/paperless/scripts/backup_paperless_data.sh /usr/bin/backup_paperless_data.sh && \
+    chmod 755 /usr/bin/backup_paperless_data.sh
 
 WORKDIR /usr/src/paperless/src
 
