@@ -2,7 +2,6 @@ Paperless
 #########
 
 |Documentation|
-|Chat|
 |Travis|
 |Dependencies|
 
