@@ -16,13 +16,3 @@ pytz>=2016.10
 gunicorn==19.7.1
 chardet==3.0.4
 PyPDF2==1.26.0
-
-# For the tests
-factory-boy
-pytest
-pytest-django
-pytest-sugar
-pytest-env
-pep8
-flake8
-tox

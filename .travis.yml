@@ -7,6 +7,8 @@ services:
 
 install:
   - docker build -t paperless .
+  - cp docker-compose.yml.example docker-compose.yml
+  - cp docker-compose.env.example docker-compose.env
   - docker-compose up -d
 
 script:
