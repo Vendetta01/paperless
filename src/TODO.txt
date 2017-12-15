@@ -8,3 +8,4 @@ TODO:
    (right now tiff)
 -> Make util class and move e.g. strip_whitespace... into it
 -> Determine which filenumbers are not used (for now the highest free filenumber is shown in help_text)
+-> Write tests: paperless_textpdf -> read text pdf and compare to anticipated result, paperless_preprocess -> ???

@@ -1,20 +1,15 @@
 language: python
+python:
+  - 3.5
 
-sudo: false
-
-matrix:
-    include:
-        - python: 3.4
-          env: TOXENV=py34
-        - python: 3.5
-          env: TOXENV=py35
-        - python: 3.6
-          env: TOXENV=py36
-        - python: 3.6
-          env: TOXENV=pycodestyle
+services:
+  - docker
 
 install:
-    - pip install --requirement requirements.txt
-    - pip install tox
+  - docker build -t paperless .
+  - docker-compose up -d
 
-script: tox -c src/tox.ini
+script:
+  - docker ps | grep -q paperless_webserver_1
+  - docker ps | grep -q paperless_consumer_1
+  - docker exec -e PAPERLESS_EMAIL_SECRET=paperless paperless_webserver_1 ./manage.py test
