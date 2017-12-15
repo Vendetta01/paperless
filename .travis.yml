@@ -9,6 +9,7 @@ install:
   - docker build -t paperless .
   - cp docker-compose.yml.example docker-compose.yml
   - cp docker-compose.env.example docker-compose.env
+  - sed -i 's|npodewitz/paperless:x.y|paperless|g' docker-compose.yml
   - docker-compose up -d
 
 script:

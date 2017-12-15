@@ -2,7 +2,7 @@ version: '2'
 
 services:
     webserver:
-        image: npodewitz/paperless:1.2
+        image: npodewitz/paperless:x.y
         ports:
             # You can adapt the port you want Paperless to listen on by
             # modifying the part before the `:`.
@@ -24,7 +24,7 @@ services:
         command: ["runserver", "--insecure", "0.0.0.0:8000"]
 
     consumer:
-        image: npodewitz/paperless:1.2
+        image: npodewitz/paperless:x.y
         volumes:
             - data:/usr/src/paperless/data
             - media:/usr/src/paperless/media
