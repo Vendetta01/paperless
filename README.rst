@@ -136,5 +136,5 @@ work and they need the money a lot more than I do.
    :target: https://paperless.readthedocs.org/
 .. |Travis| image:: https://travis-ci.org/VendettA01/paperless.svg?branch=master
    :target: https://travis-ci.org/Vendetta01/paperless
-.. |Dependencies| image:: https://www.versioneye.com/user/projects/5a324b1e0fb24f70078a665a/badge.svg
-   :target: https://www.versioneye.com/user/projects/5a324b1e0fb24f70078a665a
+.. |Dependencies| image:: https://www.versioneye.com/user/projects/5a35170a0fb24f192e76a504?child=summary/badge.svg
+   :target: https://www.versioneye.com/user/projects/5a35170a0fb24f192e76a504?child=summary
