@@ -6,7 +6,7 @@ django-filter>=1.0
 django-flat-responsive>=1.2.0
 djangorestframework>=3.5.3
 filemagic>=1.6
-fuzzywuzzy[speedup]==0.15.1
+fuzzywuzzy[speedup]==0.16.0
 langdetect>=1.0.7
 https://github.com/openpaperwork/pyocr/zipball/30182d153535489588fec630f0c533f49334e4b2#egg=pyocr
 python-dateutil>=2.6.0
