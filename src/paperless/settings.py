@@ -48,7 +48,7 @@ if _allowed_hosts:
     ALLOWED_HOSTS = _allowed_hosts.split(",")
 
 FORCE_SCRIPT_NAME = os.getenv("PAPERLESS_FORCE_SCRIPT_NAME")
-    
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -215,7 +215,8 @@ OCR_THREADS = os.getenv("PAPERLESS_OCR_THREADS")
 # If this is true, any failed attempts to OCR a PDF will result in the PDF
 # being indexed anyway, with whatever we could get.  If it's False, the file
 # will simply be left in the CONSUMPTION_DIR.
-FORGIVING_OCR = bool(os.getenv("PAPERLESS_FORGIVING_OCR", "YES").lower() in ("yes", "y", "1", "t", "true"))
+FORGIVING_OCR = bool(os.getenv("PAPERLESS_FORGIVING_OCR",
+                               "YES").lower() in ("yes", "y", "1", "t", "true"))
 
 # GNUPG needs a home directory for some reason
 GNUPG_HOME = os.getenv("HOME", "/tmp")

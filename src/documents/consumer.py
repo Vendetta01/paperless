@@ -118,7 +118,6 @@ class Consumer(object):
             )
 
             parsed_document = parser_class(doc)
-            
 
             # Check for preprocess parser. If used do not store file
             if (type(parsed_document) is PreprocessDocumentParser):
@@ -127,7 +126,7 @@ class Consumer(object):
                     "consumer: preprocessing..."
                 )
                 parsed_document.preprocess()
-                
+
                 parsed_document.cleanup()
                 self._cleanup_doc(doc)
 
@@ -136,14 +135,13 @@ class Consumer(object):
                     "Document {} preprocess consumption finished".format(doc)
                 )
 
-                #document_consumption_finished.send(
-                #    sender=self.__class__,
-                #    document=document,
-                #    logging_group=self.logging_group
-                #)
+                # document_consumption_finished.send(
+                #     sender=self.__class__,
+                #     document=document,
+                #     logging_group=self.logging_group
+                # )
                 continue
-            
-            
+
             thumbnail = parsed_document.get_thumbnail()
 
             try:
@@ -210,8 +208,8 @@ class Consumer(object):
         self.log("debug", "Saving record to database")
 
         created = file_info.created or timezone.make_aware(
-                    datetime.datetime.fromtimestamp(stats.st_mtime))
-        
+            datetime.datetime.fromtimestamp(stats.st_mtime))
+
         # Always insert into latest folder (folder with highest number)
         # TODO: At some point do something more intelligent here,
         # maybe check for "suitable" folder according to tags and stuff
@@ -220,10 +218,10 @@ class Consumer(object):
         except:
             foldernumber = 1
         try:
-            filenumber = Document.objects.filter(foldernumber=foldernumber).latest('filenumber').filenumber+1
+            filenumber = Document.objects.filter(
+                foldernumber=foldernumber).latest('filenumber').filenumber + 1
         except:
             filenumber = 1
-
 
         with open(doc, "rb") as f:
             document = Document.objects.create(

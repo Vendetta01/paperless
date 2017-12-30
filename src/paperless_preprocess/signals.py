@@ -5,7 +5,8 @@ from .parsers import PreprocessDocumentParser
 
 class ConsumerDeclaration(object):
 
-    MATCHING_FILES_FORCE_PARSER = re.compile("^.*\.preprocess\.\.(pdf|jpg|jpeg|gif|png|tiff?|pnm|bmp)$")
+    MATCHING_FILES_FORCE_PARSER = re.compile(
+        "^.*\.preprocess\.\.(pdf|jpg|jpeg|gif|png|tiff?|pnm|bmp)$")
     MATCHING_FILES = re.compile("^.*\.(pdf|jpg|jpeg|gif|png|tiff?|pnm|bmp)$")
 
     @classmethod
@@ -21,7 +22,7 @@ class ConsumerDeclaration(object):
                 "parser": PreprocessDocumentParser,
                 "weight": 100
             }
-        
+
         # Check for supported file types
         # weight is lower than TextPDFParser, so that text pdfs
         # do not get preprocessed
@@ -32,4 +33,3 @@ class ConsumerDeclaration(object):
             }
 
         return None
-

@@ -7,12 +7,14 @@ class CommandLineError(Exception):
     errors occur on the command line to provide a useful command line
     interface.
     """
+
     def render(self, msg):
         return msg % vars(self)
 
 
 class ExtensionNotSupported(CommandLineError):
     """This error is raised with unsupported extensions"""
+
     def __init__(self, ext):
         self.ext = ext
 
@@ -36,6 +38,7 @@ class MissingFileError(CommandLineError):
     """This error is raised when the file can not be located at the
     specified path.
     """
+
     def __init__(self, filename):
         self.filename = filename
         self.root, self.ext = os.path.splitext(filename)
@@ -51,6 +54,7 @@ class UnknownMethod(CommandLineError):
     """This error is raised when the specified --method on the command
     line is unknown.
     """
+
     def __init__(self, method):
         self.method = method
 
@@ -64,6 +68,7 @@ class ShellError(CommandLineError):
     """This error is raised when a shell.run returns a non-zero exit code
     (meaning the command failed).
     """
+
     def __init__(self, command, exit_code, stdout, stderr):
         self.command = command
         self.exit_code = exit_code
@@ -97,4 +102,3 @@ class ShellError(CommandLineError):
             return self.not_installed_message()
         else:
             return self.failed_message()
-        

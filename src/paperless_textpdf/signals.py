@@ -22,12 +22,12 @@ class ConsumerDeclaration(object):
                 "parser": TextPDFDocumentParser,
                 "weight": 100
             }
-        
+
         # We have to assign a weight larger than preprocess here
         # to correctly process text pdfs
 
         if (cls.MATCHING_FILES.match(doc.lower()) and
-            PDFTextract().hasText(doc)):
+                PDFTextract().hasText(doc)):
             return {
                 "parser": TextPDFDocumentParser,
                 "weight": 20

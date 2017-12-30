@@ -6,7 +6,6 @@ from documents.parsers import DocumentParser, ParseError
 from .pdftextract import PDFTextract
 
 
-
 class TextPDFDocumentParser(DocumentParser):
     """
     This parser reads text directly from PDF files. Used for already OCRed
@@ -24,7 +23,8 @@ class TextPDFDocumentParser(DocumentParser):
             self.CONVERT,
             "-scale", "500x500",
             "-alpha", "remove",
-            self.document_path+'[0]', os.path.join(self.tempdir, "thumbnail-0000.png")
+            self.document_path +
+            '[0]', os.path.join(self.tempdir, "thumbnail-0000.png")
         )
 
         return os.path.join(self.tempdir, "thumbnail-0000.png")
@@ -32,7 +32,6 @@ class TextPDFDocumentParser(DocumentParser):
     def get_text(self):
         # Return text from PDF here
         return PDFTextract().getText(self.document_path)
-
 
 
 def run_convert(*args):
@@ -44,5 +43,3 @@ def run_convert(*args):
         environment["MAGICK_TMPDIR"] = settings.CONVERT_TMPDIR
 
     subprocess.Popen(args, env=environment).wait()
-
-

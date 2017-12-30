@@ -42,8 +42,10 @@ class DocumentFilterSet(FilterSet):
         )
     }
 
-    correspondent__name = CharFilter(field_name="correspondent__name", **CHAR_KWARGS)
-    correspondent__slug = CharFilter(field_name="correspondent__slug", **CHAR_KWARGS)
+    correspondent__name = CharFilter(
+        field_name="correspondent__name", **CHAR_KWARGS)
+    correspondent__slug = CharFilter(
+        field_name="correspondent__slug", **CHAR_KWARGS)
     tags__name = CharFilter(field_name="tags__name", **CHAR_KWARGS)
     tags__slug = CharFilter(field_name="tags__slug", **CHAR_KWARGS)
 

@@ -211,9 +211,8 @@ class Document(models.Model):
     modified = models.DateTimeField(
         auto_now=True, editable=False, db_index=True)
 
-    foldernumber = models.IntegerField(default=1, db_index=True)    
+    foldernumber = models.IntegerField(default=1, db_index=True)
     filenumber = models.IntegerField(default=1, db_index=True)
-
 
     class Meta(object):
         ordering = ("correspondent", "title")
@@ -265,12 +264,13 @@ class Document(models.Model):
     @property
     def thumbnail_url(self):
         return reverse("fetch", kwargs={"kind": "thumb", "pk": self.pk})
-    
+
     @staticmethod
     def get_next_free_fn(foldernumber):
         next_free_fn = 1
         try:
-            next_free_fn = Document.objects.filter(foldernumber=foldernumber).latest('filenumber').filenumber+1
+            next_free_fn = Document.objects.filter(
+                foldernumber=foldernumber).latest('filenumber').filenumber + 1
         except Exception as e:
             next_free_fn = 1
         return next_free_fn

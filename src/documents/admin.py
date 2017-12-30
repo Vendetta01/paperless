@@ -49,8 +49,10 @@ class TagAdmin(CommonAdmin):
     list_filter = ("colour", "matching_algorithm")
     list_editable = ("colour", "match", "matching_algorithm")
 
+
 def get_next_free_id(obj):
     return obj.get_next_free_id
+
 
 class DocumentAdmin(CommonAdmin):
 
@@ -63,7 +65,6 @@ class DocumentAdmin(CommonAdmin):
     list_display = ("title", "created", "thumbnail", "correspondent", "tags_")
     list_filter = ("tags", "correspondent", MonthListFilter)
     ordering = ["-created", "correspondent"]
-    
 
     def has_add_permission(self, request):
         return False
@@ -121,13 +122,13 @@ class DocumentAdmin(CommonAdmin):
             href=obj.download_url
         )
     document.allow_tags = True
-    
+
     # Override get_form so that we can add a custom help text for "filenumber",
     # which shows the highest free filenumber
     def get_form(self, request, obj=None, **kwargs):
         # Get default form from parent class
         form = super().get_form(request, obj, **kwargs)
-        
+
         # Set a custom help text
         foldernumber = 1
         if obj is not None:
@@ -139,7 +140,6 @@ class DocumentAdmin(CommonAdmin):
         except:
             pass
         return form
-
 
     @staticmethod
     def _html_tag(kind, inside=None, **kwargs):
