@@ -28,11 +28,13 @@ gunicorn==19.9.0
 idna==2.8
 imagesize==1.1.0
 inotify-simple==1.1.8
+iso639==0.1.4
 jinja2==2.10
 langdetect==1.0.7
 markupsafe==1.1.0
 more-itertools==5.0.0
 packaging==19.0
+pdf2image==1.4.1
 pdftotext==2.1.1
 pillow==5.4.1
 pluggy==0.8.1
@@ -43,6 +45,7 @@ pycodestyle==2.4.0
 pygments==2.3.1
 pyocr==0.5.3
 pyparsing==2.3.1
+PyPDF2==1.26.0
 pytest-cov==2.6.1
 pytest-django==3.4.5
 pytest-env==0.6.2

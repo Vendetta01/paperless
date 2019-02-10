@@ -213,6 +213,20 @@ class Consumer:
         created = file_info.created or date or timezone.make_aware(
                     datetime.datetime.fromtimestamp(stats.st_mtime))
 
+        # Always insert into latest folder (folder with highest number)
+        # TODO: At some point do something more intelligent here,
+        # maybe check for "suitable" folder according to tags and stuff
+        try:
+            foldernumber = Document.objects.latest('foldernumber').foldernumber
+        except:
+            foldernumber = 1
+        try:
+            filenumber = Document.objects.filter(foldernumber=foldernumber
+                    ).latest('filenumber').filenumber+1
+        except:
+            filenumber = 1
+
+
         with open(doc, "rb") as f:
             document = Document.objects.create(
                 correspondent=file_info.correspondent,
@@ -222,7 +236,9 @@ class Consumer:
                 checksum=hashlib.md5(f.read()).hexdigest(),
                 created=created,
                 modified=created,
-                storage_type=self.storage_type
+                storage_type=self.storage_type,
+                foldernumber=foldernumber,
+                filenumber=filenumber
             )
 
         relevant_tags = set(list(Tag.match_all(text)) + list(file_info.tags))

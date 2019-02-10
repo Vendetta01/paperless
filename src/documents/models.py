@@ -254,8 +254,12 @@ class Document(models.Model):
     added = models.DateTimeField(
         default=timezone.now, editable=False, db_index=True)
 
+    foldernumber = models.IntegerField(default=1, db_index=True)
+    filenumber   = models.IntegerField(default=1, db_index=True)
+
     class Meta:
         ordering = ("correspondent", "title")
+        unique_together = ('foldernumber', 'filenumber')
 
     def __str__(self):
         created = self.created.strftime("%Y%m%d%H%M%S")
@@ -313,6 +317,17 @@ class Document(models.Model):
     @property
     def thumbnail_url(self):
         return reverse("fetch", kwargs={"kind": "thumb", "pk": self.pk})
+
+    @staticmethod
+    def get_next_free_fn(foldernumber):
+        next_free_fn = 1
+        try:
+            next_free_fn = Document.objects.filter(
+                    foldernumber=folernumber).latest(
+                            'filenumber').filenumber + 1
+        except Exception as e:
+            next_free_fn = 1
+        return next_free_fn
 
 
 class Log(models.Model):

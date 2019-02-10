@@ -328,6 +328,24 @@ class DocumentAdmin(DjangoQLSearchMixin, CommonAdmin):
             href=obj.download_url
         )
 
+    # Override get_form so that we can add a custom help text for "filenumber",
+    # which shows the highest free filenumber in this folder
+    def get_form(self, request, obj=None, **kwargs):
+        # Get default form from parent class
+        form = super().get_form(request, obj, **kwargs)
+
+        # Set a custom help text
+        foldernumber = 1
+        if obj is not None:
+            foldernumber = obj.foldernumber
+        help_text = "Next free filenumber: {} (foldernumber: {})".format(
+                Document.get_next_free_fn(foldernumber), foldernumber)
+        try:
+            form.base_fields['filenumber'].help_text = help_text
+        except:
+            pass
+        return form
+
     @staticmethod
     def _html_tag(kind, inside=None, **kwargs):
         attributes = format_html_join(' ', '{}="{}"', kwargs.items())
