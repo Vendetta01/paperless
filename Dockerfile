@@ -9,9 +9,10 @@ ENV PAPERLESS_EXPORT_DIR /export
 ##############################
 # Install dependencies
 COPY requirements.txt /usr/src/paperless/
-RUN cd /usr/src/paperless/ && \
+RUN cd /usr/src/paperless/ && apk update --no-cache \
     apk add --no-cache python3 sudo imagemagick ghostscript gnupg bash curl \
-      poppler unpaper optipng libmagic libpq tiff zlib shadow tesseract-ocr && \
+      poppler unpaper optipng libmagic libpq tiff zlib shadow tesseract-ocr \
+      poppler-utils && \
     apk add --no-cache --virtual .build-deps python3-dev poppler-dev \
       postgresql-dev build-base musl-dev zlib-dev jpeg-dev && \
     pip3 install --upgrade pip && \
@@ -58,7 +59,9 @@ RUN chown -Rh paperless:paperless /usr/src/paperless
 RUN cp /usr/src/paperless/scripts/docker-entrypoint.sh /sbin/docker-entrypoint.sh && \
     chmod 755 /sbin/docker-entrypoint.sh &&\
     cp /usr/src/paperless/scripts/create_searchable_pdf.py /usr/bin/ && \
-    chmod 755 /usr/bin/create_searchable_pdf.py
+    chmod 755 /usr/bin/create_searchable_pdf.py && \
+    cp /usr/src/paperless/scripts/create_searchable_pdf.sh /usr/bin/ && \
+    chmod 755 /usr/bin/create_searchable_pdf.sh
 
 WORKDIR /usr/src/paperless/src
 
