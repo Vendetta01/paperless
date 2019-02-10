@@ -62,9 +62,9 @@ class RasterisedDocumentParser(DocumentParser):
         # Extract text from PDF using pdftotext
         text = get_text_from_pdf(self.document_path)
 
-        # We assume, that a PDF with at least 50 characters contains text
+        # We assume, that a PDF with at least 10 characters contains text
         # (so no OCR required)
-        return len(text) > 50
+        return len(text) > 10
 
     def get_text(self):
 
