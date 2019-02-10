@@ -49,9 +49,10 @@ RUN (cd /usr/src/paperless/src && \
 
 ##############################
 # Create user
-RUN groupadd -g 1000 paperless
-RUN useradd -u 1000 -g paperless -d /usr/src/paperless paperless
-RUN chown -Rh paperless:paperless /usr/src/paperless
+RUN groupadd -g 1000 paperless && \
+    useradd -u 1000 -g paperless -d /usr/src/paperless paperless && \
+    chown -Rh paperless:paperless /usr/src/paperless && \
+    echo "paperless ALL=(ALL) NOPASSWD: /bin/chmod" >> /etc/sudoers
 
 
 ##############################
