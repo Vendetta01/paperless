@@ -9,11 +9,11 @@ ENV PAPERLESS_EXPORT_DIR /export
 ##############################
 # Install dependencies
 COPY requirements.txt /usr/src/paperless/
-RUN cd /usr/src/paperless/ && apk update --no-cache && \
-    apk add --no-cache python3 sudo imagemagick ghostscript gnupg bash curl \
-      poppler unpaper optipng libmagic libpq tiff zlib shadow tesseract-ocr \
-      poppler-utils && \
-    apk add --no-cache --virtual .build-deps python3-dev poppler-dev \
+RUN cd /usr/src/paperless/ && \
+    apk add --update --no-cache python3 sudo imagemagick ghostscript gnupg \
+      bash curl poppler unpaper optipng libmagic libpq tiff zlib shadow \
+      tesseract-ocr poppler-utils && \
+    apk add --update --no-cache --virtual .build-deps python3-dev poppler-dev \
       postgresql-dev build-base musl-dev zlib-dev jpeg-dev && \
     pip3 install --upgrade pip && \
     pip3 install --no-cache-dir -r requirements.txt && \
