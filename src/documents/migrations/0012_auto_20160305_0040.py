@@ -85,7 +85,7 @@ def move_documents_and_create_thumbnails(apps, schema_editor):
 
         subprocess.Popen((
             settings.CONVERT_BINARY,
-            "-scale", "500x5000",
+            "-scale", "500x500",
             "-alpha", "remove",
             orig_target,
             os.path.join(thumb_temp, "convert-%04d.png")

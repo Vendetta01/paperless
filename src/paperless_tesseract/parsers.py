@@ -49,7 +49,7 @@ class RasterisedDocumentParser(DocumentParser):
         # Run convert to get a decent thumbnail
         run_convert(
             self.CONVERT,
-            "-scale", "500x5000",
+            "-scale", "500x500",
             "-alpha", "remove",
             "{}[0]".format(self.document_path),
             out_path
