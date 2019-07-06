@@ -255,7 +255,7 @@ class Document(models.Model):
         default=timezone.now, editable=False, db_index=True)
 
     foldernumber = models.IntegerField(default=1, db_index=True)
-    filenumber   = models.IntegerField(default=1, db_index=True)
+    filenumber = models.IntegerField(default=1, db_index=True)
 
     class Meta:
         ordering = ("correspondent", "title")

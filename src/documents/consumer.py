@@ -218,14 +218,13 @@ class Consumer:
         # maybe check for "suitable" folder according to tags and stuff
         try:
             foldernumber = Document.objects.latest('foldernumber').foldernumber
-        except:
+        except Exception as e:
             foldernumber = 1
         try:
-            filenumber = Document.objects.filter(foldernumber=foldernumber
-                    ).latest('filenumber').filenumber+1
-        except:
+            filenumber = Document.objects.filter(
+                foldernumber=foldernumber).latest('filenumber').filenumber + 1
+        except Exception as e:
             filenumber = 1
-
 
         with open(doc, "rb") as f:
             document = Document.objects.create(

@@ -342,7 +342,7 @@ class DocumentAdmin(DjangoQLSearchMixin, CommonAdmin):
                 Document.get_next_free_fn(foldernumber), foldernumber)
         try:
             form.base_fields['filenumber'].help_text = help_text
-        except:
+        except Exception as e:
             pass
         return form
 
