@@ -36,6 +36,7 @@ COPY src/ /usr/src/paperless/src/
 COPY data/ /usr/src/paperless/data/
 COPY media/ /usr/src/paperless/media/
 COPY scripts/ /usr/src/paperless/scripts/
+COPY paperless.conf.example2 /etc/paperless.conf
 
 
 ##############################
