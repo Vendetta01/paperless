@@ -18,7 +18,7 @@ RUN cd /usr/src/paperless/ && \
     apk add --no-cache --allow-untrusted /tmp/$GHOSTSCRIPT_APK && \
     rm /tmp/$GHOSTSCRIPT_APK && \
     apk add --update --no-cache --virtual .build-deps python3-dev poppler-dev \
-      postgresql-dev build-base musl-dev zlib-dev jpeg-dev && \
+      postgresql-dev build-base musl-dev zlib-dev jpeg-dev openldap-dev && \
     pip3 install --upgrade pip && \
     pip3 install --no-cache-dir -r requirements.txt && \
     apk del .build-deps
@@ -36,7 +36,7 @@ COPY src/ /usr/src/paperless/src/
 COPY data/ /usr/src/paperless/data/
 COPY media/ /usr/src/paperless/media/
 COPY scripts/ /usr/src/paperless/scripts/
-COPY paperless.conf.example2 /etc/paperless.conf
+#COPY paperless.conf.example3 /etc/paperless.conf
 
 
 ##############################

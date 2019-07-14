@@ -341,8 +341,23 @@ if PAPERLESS_USE_LDAP:
 AUTH_LDAP_SERVER_UI = os.getenv("PAPERLESS_AUTH_LDAP_SERVER_UI")
 AUTH_LDAP_BIND_DN = os.getenv("PAPERLESS_AUTH_LDAP_BIND_DN")
 AUTH_LDAP_BIND_PASSWORD = os.getenv("PAPERLESS_AUTH_LDAP_BIND_PASSWORD")
-AUTH_LDAP_USER_DN_TEMPLATE = os.getenv("PAPERLESS_AUTH_USER_DN_TEMPLATE")
+AUTH_LDAP_USER_DN_TEMPLATE = os.getenv("PAPERLESS_AUTH_LDAP_USER_DN_TEMPLATE")
 AUTH_LDAP_START_TLS = __get_boolean("PAPERLESS_AUTH_LDAP_START_TLS")
+
+#AUTH_LDAP_GROUP_SEARCH = os.getenv("PAPERLESS_AUTH_LDAP_GROUP_SEARCH")
+AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
+        "ou=people,dc=planetexpress,dc=com",
+        ldap.SCOPE_SUBTREE,
+        "(objectClass=groupOfNames)",
+)
+AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
+
+AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+        "is_active": "cn=ship_crew,ou=people,dc=planetexpress,dc=com",
+        "is_staff": "cn=ship_crew,ou=people,dc=planetexpress,dc=com",
+        "is_superuser": "cn=ship_crew,ou=people,dc=planetexpress,dc=com",
+}
+#AUTH_LDAP_USER_FLAGS_BY_GROUP = os.getenv("PAPERLESS_AUTH_LDAP_USER_FLAGS_BY_GROUP")
 
 # Simple group restrictions
 AUTH_LDAP_REQUIRE_GROUP = os.getenv("PAPERLESS_AUTH_LDAP_REQUIRE_GROUP")
