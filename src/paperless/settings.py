@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 import ldap
+import logging
 
 from dotenv import load_dotenv
 from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
@@ -329,19 +330,17 @@ PAPERLESS_RECENT_CORRESPONDENT_YEARS = int(os.getenv(
 # LDAP Configuration
 PAPERLESS_USE_LDAP = __get_boolean("PAPERLESS_USE_LDAP")
 
-if PAPERLESS_USE_LDAP:
-    # Keep ModelBackend around for per-user permissions and the local
-    # superuser.
-    AUTHENTICATION_BACKENDS = (
-        "django_auth_ldap.backend.LDAPBackend",
-        "django.contrib.auth.backends.ModelBackend",
-        )
+
 
 # Baseline configurations
-AUTH_LDAP_SERVER_UI = os.getenv("PAPERLESS_AUTH_LDAP_SERVER_UI")
+AUTH_LDAP_SERVER_URI = os.getenv("PAPERLESS_AUTH_LDAP_SERVER_URI")
 AUTH_LDAP_BIND_DN = os.getenv("PAPERLESS_AUTH_LDAP_BIND_DN")
 AUTH_LDAP_BIND_PASSWORD = os.getenv("PAPERLESS_AUTH_LDAP_BIND_PASSWORD")
-AUTH_LDAP_USER_DN_TEMPLATE = os.getenv("PAPERLESS_AUTH_LDAP_USER_DN_TEMPLATE")
+#AUTH_LDAP_USER_DN_TEMPLATE = os.getenv("PAPERLESS_AUTH_LDAP_USER_DN_TEMPLATE")
+
+AUTH_LDAP_USER_SEARCH = LDAPSearch(
+        "ou=people,dc=planetexpress,dc=com", ldap.SCOPE_SUBTREE, "(uid=%(user)s)",)
+
 AUTH_LDAP_START_TLS = __get_boolean("PAPERLESS_AUTH_LDAP_START_TLS")
 
 #AUTH_LDAP_GROUP_SEARCH = os.getenv("PAPERLESS_AUTH_LDAP_GROUP_SEARCH")
@@ -360,8 +359,10 @@ AUTH_LDAP_USER_FLAGS_BY_GROUP = {
 #AUTH_LDAP_USER_FLAGS_BY_GROUP = os.getenv("PAPERLESS_AUTH_LDAP_USER_FLAGS_BY_GROUP")
 
 # Simple group restrictions
-AUTH_LDAP_REQUIRE_GROUP = os.getenv("PAPERLESS_AUTH_LDAP_REQUIRE_GROUP")
-AUTH_LDAP_DENY_GROUP = os.getenv("PAPERLESS_AUTH_LDAP_DENY_GROUP")
+#AUTH_LDAP_REQUIRE_GROUP = os.getenv("PAPERLESS_AUTH_LDAP_REQUIRE_GROUP")
+#AUTH_LDAP_DENY_GROUP = os.getenv("PAPERLESS_AUTH_LDAP_DENY_GROUP")
+AUTH_LDAP_REQUIRE_GROUP = "cn=ship_crew,ou=people,dc=planetexpress,dc=com"
+AUTH_LDAP_DENY_GROUP = "cn=admin_staff,ou=people,dc=planetexpress,dc=com"
 
 # Populate the Django user from the LDAP directory.
 #AUTH_LDAP_USER_ATTR_MAP = os.getenv("PAPERLESS_AUTH_LDAP_USER_ATTR_MAP", {
@@ -374,6 +375,24 @@ AUTH_LDAP_DENY_GROUP = os.getenv("PAPERLESS_AUTH_LDAP_DENY_GROUP")
 # LDAP traffic.
 AUTH_LDAP_CACHE_TIMEOUT = os.getenv("PAPERLESS_AUTH_LDAP_CACHE_TIMEOUT")
 
+print("DEBUG: SERVER_URI %s" % AUTH_LDAP_SERVER_URI)
+print("DEBUG: BIND_DN %s" % AUTH_LDAP_BIND_DN)
+print("DEBUG: BIND_PASSWORD %s" % AUTH_LDAP_BIND_PASSWORD)
+
+
+if PAPERLESS_USE_LDAP:
+    # Keep ModelBackend around for per-user permissions and the local
+    # superuser.
+    AUTHENTICATION_BACKENDS = (
+        "django_auth_ldap.backend.LDAPBackend",
+        "django.contrib.auth.backends.ModelBackend",
+        )
+    # Enable debugging
+    logger = logging.getLogger('django_auth_ldap')
+    logger.addHandler(logging.StreamHandler())
+    logger.setLevel(logging.DEBUG)
+
+    ldap.set_option( ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER ) 
 
 
 ###############################################################
