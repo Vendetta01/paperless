@@ -18,7 +18,6 @@ from dotenv import load_dotenv
 from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
 
 
-
 # Tap paperless.conf if it's available
 if os.path.exists("/etc/paperless.conf"):
     load_dotenv("/etc/paperless.conf")
@@ -62,7 +61,7 @@ if _allowed_hosts:
     ALLOWED_HOSTS = _allowed_hosts.split(",")
 
 FORCE_SCRIPT_NAME = os.getenv("PAPERLESS_FORCE_SCRIPT_NAME")
-    
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -106,11 +105,13 @@ MIDDLEWARE = [
 ]
 
 # We allow CORS from localhost:8080
-CORS_ORIGIN_WHITELIST = tuple(os.getenv("PAPERLESS_CORS_ALLOWED_HOSTS", "localhost:8080").split(","))
+CORS_ORIGIN_WHITELIST = tuple(
+    os.getenv("PAPERLESS_CORS_ALLOWED_HOSTS", "localhost:8080").split(","))
 
 # If auth is disabled, we just use our "bypass" authentication middleware
 if bool(os.getenv("PAPERLESS_DISABLE_LOGIN", "false").lower() in ("yes", "y", "1", "t", "true")):
-    _index = MIDDLEWARE.index("django.contrib.auth.middleware.AuthenticationMiddleware")
+    _index = MIDDLEWARE.index(
+        "django.contrib.auth.middleware.AuthenticationMiddleware")
     MIDDLEWARE[_index] = "paperless.middleware.Middleware"
 
 ROOT_URLCONF = 'paperless.urls'
@@ -330,107 +331,67 @@ PAPERLESS_RECENT_CORRESPONDENT_YEARS = int(os.getenv(
 # LDAP Configuration
 PAPERLESS_USE_LDAP = __get_boolean("PAPERLESS_USE_LDAP")
 
-
-
-# Baseline configurations
-AUTH_LDAP_SERVER_URI = os.getenv("PAPERLESS_AUTH_LDAP_SERVER_URI")
-AUTH_LDAP_BIND_DN = os.getenv("PAPERLESS_AUTH_LDAP_BIND_DN")
-AUTH_LDAP_BIND_PASSWORD = os.getenv("PAPERLESS_AUTH_LDAP_BIND_PASSWORD")
-#AUTH_LDAP_USER_DN_TEMPLATE = os.getenv("PAPERLESS_AUTH_LDAP_USER_DN_TEMPLATE")
-
-AUTH_LDAP_USER_SEARCH = LDAPSearch(
-        "ou=people,dc=planetexpress,dc=com", ldap.SCOPE_SUBTREE, "(uid=%(user)s)",)
-
-AUTH_LDAP_START_TLS = __get_boolean("PAPERLESS_AUTH_LDAP_START_TLS")
-
-#AUTH_LDAP_GROUP_SEARCH = os.getenv("PAPERLESS_AUTH_LDAP_GROUP_SEARCH")
-AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
-        "ou=people,dc=planetexpress,dc=com",
-        ldap.SCOPE_SUBTREE,
-        "(objectClass=groupOfNames)",
-)
-AUTH_LDAP_GROUP_TYPE = GroupOfNamesType(name_attr="cn")
-
-AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-        "is_active": "cn=ship_crew,ou=people,dc=planetexpress,dc=com",
-        "is_staff": "cn=ship_crew,ou=people,dc=planetexpress,dc=com",
-        "is_superuser": "cn=ship_crew,ou=people,dc=planetexpress,dc=com",
-}
-#AUTH_LDAP_USER_FLAGS_BY_GROUP = os.getenv("PAPERLESS_AUTH_LDAP_USER_FLAGS_BY_GROUP")
-
-# Simple group restrictions
-#AUTH_LDAP_REQUIRE_GROUP = os.getenv("PAPERLESS_AUTH_LDAP_REQUIRE_GROUP")
-#AUTH_LDAP_DENY_GROUP = os.getenv("PAPERLESS_AUTH_LDAP_DENY_GROUP")
-AUTH_LDAP_REQUIRE_GROUP = "cn=ship_crew,ou=people,dc=planetexpress,dc=com"
-AUTH_LDAP_DENY_GROUP = "cn=admin_staff,ou=people,dc=planetexpress,dc=com"
-
-# Populate the Django user from the LDAP directory.
-#AUTH_LDAP_USER_ATTR_MAP = os.getenv("PAPERLESS_AUTH_LDAP_USER_ATTR_MAP", {
-#    "first_name": "givenName",
-#    "last_name": "sn",
-#    "email": "mail",
-#})
-
-# Cache distinguised names and group memberships for an hour to minimize
-# LDAP traffic.
-AUTH_LDAP_CACHE_TIMEOUT = os.getenv("PAPERLESS_AUTH_LDAP_CACHE_TIMEOUT")
-
-print("DEBUG: SERVER_URI %s" % AUTH_LDAP_SERVER_URI)
-print("DEBUG: BIND_DN %s" % AUTH_LDAP_BIND_DN)
-print("DEBUG: BIND_PASSWORD %s" % AUTH_LDAP_BIND_PASSWORD)
-
-
 if PAPERLESS_USE_LDAP:
     # Keep ModelBackend around for per-user permissions and the local
     # superuser.
     AUTHENTICATION_BACKENDS = (
         "django_auth_ldap.backend.LDAPBackend",
         "django.contrib.auth.backends.ModelBackend",
-        )
+    )
     # Enable debugging
     logger = logging.getLogger('django_auth_ldap')
     logger.addHandler(logging.StreamHandler())
     logger.setLevel(logging.DEBUG)
 
-    ldap.set_option( ldap.OPT_X_TLS_REQUIRE_CERT, ldap.OPT_X_TLS_NEVER ) 
+    # Connection options
+    AUTH_LDAP_CONNECTION_OPTIONS = {
+        ldap.OPT_DEBUG_LEVEL: 200,
+        ldap.OPT_REFERRALS: 0,
+        ldap.OPT_X_TLS_REQUIRE_CERT: ldap.OPT_X_TLS_ALLOW,
+    }
 
+    # Baseline configurations
+    AUTH_LDAP_SERVER_URI = os.getenv("PAPERLESS_AUTH_LDAP_SERVER_URI")
+    AUTH_LDAP_BIND_DN = os.getenv("PAPERLESS_AUTH_LDAP_BIND_DN")
+    AUTH_LDAP_BIND_PASSWORD = os.getenv("PAPERLESS_AUTH_LDAP_BIND_PASSWORD")
+    AUTH_LDAP_START_TLS = __get_boolean("PAPERLESS_AUTH_LDAP_START_TLS")
 
-###############################################################
-# Baseline configuration.
-#AUTH_LDAP_SERVER_URI = "ldap://ldap.example.com"
+    # User search filter
+    AUTH_LDAP_USER_SEARCH = LDAPSearch(
+        os.getenv("PAPERLESS_AUTH_LDAP_USER_DN"), ldap.SCOPE_SUBTREE,
+        os.getenv("PAPERLESS_AUTH_LDAP_USER_SEARCH_FILTER"),)
 
-#AUTH_LDAP_BIND_DN = "cn=django-agent,dc=example,dc=com"
-#AUTH_LDAP_BIND_PASSWORD = "phlebotinum"
-##AUTH_LDAP_USER_SEARCH = LDAPSearch(
-##    "ou=users,dc=example,dc=com", ldap.SCOPE_SUBTREE, "(uid=%(user)s)"
-##)
-# Or:
-# AUTH_LDAP_USER_DN_TEMPLATE = 'uid=%(user)s,ou=users,dc=example,dc=com'
+    # Group search filter
+    if (not os.getenv("PAPERLESS_AUTH_LDAP_GROUP_DN") is None
+        and not os.getenv("PAPERLESS_AUTH_LDAP_GROUP_SEARCH_FILTER") is None
+            and not os.getenv("PAPERLESS_AUTH_LDAP_GROUP_TYPE") is None):
+        AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
+            os.getenv("PAPERLESS_AUTH_LDAP_GROUP_DN"), ldap.SCOPE_SUBTREE,
+            os.getenv("PAPERLESS_AUTH_LDAP_GROUP_SEARCH_FILTER"))
+        if os.getenv("PAPERLESS_AUTH_LDAP_GROUP_TYPE").lower() == "groupofnames":
+            AUTH_LDAP_GROUP_TYPE = GroupOfNamesType()
+        else:
+            AUTH_LDAP_GROUP_TYPE = GroupOfNamesType()
 
-# Simple group restrictions
-#AUTH_LDAP_REQUIRE_GROUP = "cn=enabled,ou=django,ou=groups,dc=example,dc=com"
-#AUTH_LDAP_DENY_GROUP = "cn=disabled,ou=django,ou=groups,dc=example,dc=com"
+        if (not os.getenv("PAPERLESS_AUTH_LDAP_GROUP_DN_ACTIVE") is None
+            and not os.getenv("PAPERLESS_AUTH_LDAP_GROUP_DN_STAFF") is None
+                and not os.getenv("PAPERLESS_AUTH_LDAP_GROUP_DN_SU") is None):
+            AUTH_LDAP_USER_FLAGS_BY_GROUP = {
+                "is_active": os.getenv("PAPERLESS_AUTH_LDAP_GROUP_DN_ACTIVE"),
+                "is_staff": os.getenv("PAPERLESS_AUTH_LDAP_GROUP_DN_STAFF"),
+                "is_superuser": os.getenv("PAPERLESS_AUTH_LDAP_GROUP_DN_SU"), }
 
-# Populate the Django user from the LDAP directory.
-#AUTH_LDAP_USER_ATTR_MAP = {
-#    "first_name": "givenName",
-#    "last_name": "sn",
-#    "email": "mail",
-#}
+        # Simple group restrictions
+        AUTH_LDAP_REQUIRE_GROUP = os.getenv(
+            "PAPERLESS_AUTH_LDAP_REQUIRE_GROUP")
+        AUTH_LDAP_DENY_GROUP = os.getenv("PAPERLESS_AUTH_LDAP_DENY_GROUP")
 
-#AUTH_LDAP_USER_FLAGS_BY_GROUP = {
-#    "is_active": "cn=active,ou=django,ou=groups,dc=example,dc=com",
-#    "is_staff": "cn=staff,ou=django,ou=groups,dc=example,dc=com",
-#    "is_superuser": "cn=superuser,ou=django,ou=groups,dc=example,dc=com",
-#}
+    # Populate the Django user from the LDAP directory.
+    AUTH_LDAP_USER_ATTR_MAP = {
+        "first_name": "givenName",
+        "last_name": "sn",
+        "email": "mail", }
 
-# This is the default, but I like to be explicit.
-#AUTH_LDAP_ALWAYS_UPDATE_USER = True
-
-# Use LDAP group membership to calculate group permissions.
-#AUTH_LDAP_FIND_GROUP_PERMS = True
-
-# Cache distinguised names and group memberships for an hour to minimize
-# LDAP traffic.
-#AUTH_LDAP_CACHE_TIMEOUT = 3600
-
+    # Cache distinguised names and group memberships for an hour to minimize
+    # LDAP traffic.
+    AUTH_LDAP_CACHE_TIMEOUT = os.getenv("PAPERLESS_AUTH_LDAP_CACHE_TIMEOUT", 0)
