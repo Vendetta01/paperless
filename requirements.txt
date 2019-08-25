@@ -9,8 +9,8 @@ chardet==3.0.4
 coverage==4.5.2
 coveralls==1.5.1
 dateparser==0.7.0
-django-auth-ldap=1.7.0; python_version <= '3.4'
-django-auth-ldap=2.0.0; python_version > '3.4'
+django-auth-ldap==1.7.0; python_version <= '3.4'
+django-auth-ldap==2.0.0; python_version > '3.4'
 django-cors-headers==2.4.0
 django-crispy-forms==1.7.2
 django-extensions==2.1.4
