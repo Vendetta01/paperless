@@ -15,7 +15,6 @@ import ldap
 import logging
 
 from dotenv import load_dotenv
-from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
 
 
 # Tap paperless.conf if it's available
@@ -332,20 +331,29 @@ PAPERLESS_RECENT_CORRESPONDENT_YEARS = int(os.getenv(
 PAPERLESS_USE_LDAP = __get_boolean("PAPERLESS_USE_LDAP")
 
 if PAPERLESS_USE_LDAP:
+    # only import ldap stuff if activated
+    from django_auth_ldap.config import LDAPSearch, GroupOfNamesType
+
     # Keep ModelBackend around for per-user permissions and the local
     # superuser.
     AUTHENTICATION_BACKENDS = (
         "django_auth_ldap.backend.LDAPBackend",
         "django.contrib.auth.backends.ModelBackend",
     )
-    # Enable debugging
+
+    # Enable log output
     logger = logging.getLogger('django_auth_ldap')
     logger.addHandler(logging.StreamHandler())
-    logger.setLevel(logging.DEBUG)
+    OPT_DEBUG_LEVEL = 0
+    if (__get_boolean("PAPERLESS_AUTH_LDAP_DEBUG")):
+        logger.setLevel(logging.DEBUG)
+        OPT_DEBUG_LEVEL = 255
+    else:
+        logger.setLevel(logging.INFO)
 
     # Connection options
     AUTH_LDAP_CONNECTION_OPTIONS = {
-        ldap.OPT_DEBUG_LEVEL: 200,
+        ldap.OPT_DEBUG_LEVEL: OPT_DEBUG_LEVEL,
         ldap.OPT_REFERRALS: 0,
         ldap.OPT_X_TLS_REQUIRE_CERT: ldap.OPT_X_TLS_ALLOW,
     }
@@ -357,6 +365,9 @@ if PAPERLESS_USE_LDAP:
     AUTH_LDAP_START_TLS = __get_boolean("PAPERLESS_AUTH_LDAP_START_TLS")
 
     # User search filter
+    # We do not use the template mode because it assumes the user name field
+    # to also be the dn, which generally is not the case. This way we can
+    # authenticate on every field not only on the dn (flexibility).
     AUTH_LDAP_USER_SEARCH = LDAPSearch(
         os.getenv("PAPERLESS_AUTH_LDAP_USER_DN"), ldap.SCOPE_SUBTREE,
         os.getenv("PAPERLESS_AUTH_LDAP_USER_SEARCH_FILTER"),)
@@ -368,6 +379,9 @@ if PAPERLESS_USE_LDAP:
         AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
             os.getenv("PAPERLESS_AUTH_LDAP_GROUP_DN"), ldap.SCOPE_SUBTREE,
             os.getenv("PAPERLESS_AUTH_LDAP_GROUP_SEARCH_FILTER"))
+        # For now only type groupofnames is implemented an it is also the
+        # default. Depending on LDAP structure this has to be extended.
+        # Should potentially also be configurable?
         if os.getenv("PAPERLESS_AUTH_LDAP_GROUP_TYPE").lower() == "groupofnames":
             AUTH_LDAP_GROUP_TYPE = GroupOfNamesType()
         else:
@@ -387,11 +401,12 @@ if PAPERLESS_USE_LDAP:
         AUTH_LDAP_DENY_GROUP = os.getenv("PAPERLESS_AUTH_LDAP_DENY_GROUP")
 
     # Populate the Django user from the LDAP directory.
+    # For now the map is fixed but could potentially be configured as well
     AUTH_LDAP_USER_ATTR_MAP = {
         "first_name": "givenName",
         "last_name": "sn",
         "email": "mail", }
 
-    # Cache distinguised names and group memberships for an hour to minimize
-    # LDAP traffic.
+    # Cache distinguished names and group memberships for this amount of time
+    # to reduce LDAP traffic. Default is 0 (do not cache at all).
     AUTH_LDAP_CACHE_TIMEOUT = os.getenv("PAPERLESS_AUTH_LDAP_CACHE_TIMEOUT", 0)
