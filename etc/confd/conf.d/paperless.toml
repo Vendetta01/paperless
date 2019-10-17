@@ -1,0 +1,27 @@
+[template]
+src = "paperless.conf.tmpl"
+dest = "/etc/paperless.conf"
+keys = [
+    "/conf/paperless/passphrase",
+    "/conf/paperless/secret_key",
+    "/conf/paperless/consumer_loop_time",
+    "/conf/paperless/time_zone",
+    "/conf/paperless/ocr_threads",
+    "/conf/paperless/ocr_languages",
+    "/conf/paperless/usermap_uid",
+    "/conf/paperless/usermap_gid",
+    "/conf/paperless/pre_consume_script",
+    "/conf/paperless/inline_doc",
+    "/conf/paperless/filename_date_order",
+    "/conf/paperless/use_ldap",
+    "/conf/ldap/uri",
+    "/conf/ldap/user_auth_dn",
+    "/conf/ldap/user_auth_pw",
+    "/conf/paperless/auth_ldap_debug",
+    "/conf/paperless/auth_ldap_user_dn",
+    "/conf/paperless/auth_ldap_group_dn",
+    "/conf/paperless/auth_ldap_group_dn_active",
+    "/conf/paperless/auth_ldap_require_group",
+]
+reload_cmd = "supervisorctl restart paperless"
+

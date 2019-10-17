@@ -1,0 +1,54 @@
+upstream paperless {
+    server unix:/run/gunicorn_paperless.sock fail_timeout=0;
+}
+
+server {
+    listen 80 default_server;
+    listen 443 ssl default_server;
+    server_name {{getenv "SERVER_HOSTNAME"}};
+    access_log /dev/stdout;
+    error_log /dev/stderr;
+
+    #ssl on;
+    ssl_certificate 
+    {{- $key := "/conf/paperless/ssl_crt"}}
+    {{- if exists $key}}
+        {{- $val := getv $key}}
+        {{- if fileExists $val}}
+            {{- print " " $val}};
+	{{- else}}
+	    {{- getenv "DEFAULT_SSL_CRT" | print " "}};
+        {{- end}}
+    {{- else}}
+	{{- getenv "DEFAULT_SSL_CRT" | print " "}};
+    {{- end}}
+    ssl_certificate_key 
+    {{- $key := "/conf/paperless/ssl_key"}}
+    {{- if exists $key}}
+        {{- $val := getv $key}}
+        {{- if fileExists $val}}
+            {{- print " " $val}};
+	{{- else}}
+	    {{- getenv "DEFAULT_SSL_KEY" | print " "}};
+        {{- end}}
+    {{- else}}
+	{{- getenv "DEFAULT_SSL_KEY" | print " "}};
+    {{- end}}
+
+    location /static/ {
+	root /var/www/paperless;
+    }
+    location /media/ {
+	root /var/www/paperless;
+    }
+
+    location / {
+	#include proxy_params;
+	proxy_set_header Host $host;
+	proxy_set_header X-Real-IP $remote_addr;
+	proxy_pass http://unix:/run/gunicorn_paperless.sock;
+    }
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+}
+

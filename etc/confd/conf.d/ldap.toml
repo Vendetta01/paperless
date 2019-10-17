@@ -1,0 +1,10 @@
+[template]
+src = "ldap.conf.tmpl"
+dest = "/etc/openldap/ldap.conf"
+keys = [
+    "/conf/ldap/base_dn",
+    "/conf/ldap/uri",
+    "/conf/paperless/ldap/tls_reqcert",
+    "/conf/paperless/ldap/tls_cacert",
+]
+reload_cmd = "supervisorctl restart gunicorn"

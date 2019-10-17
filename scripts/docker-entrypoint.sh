@@ -1,6 +1,72 @@
 #!/bin/bash
 set -e
 
+
+# Variables
+source /usr/bin/environment.sh
+
+# functions
+function generate_ssl {
+  mkdir -p $DEFAULT_SSL_BASE
+  confout="${DEFAULT_SSL_BASE}/conf"
+  keyout="${DEFAULT_SSL_KEY}"
+  certout="${DEFAULT_SSL_CRT}"
+  cakey="${DEFAULT_SSL_BASE}/ca.key"
+  cacert="${DEFAULT_SSL_BASE}/ca.crt"
+  serialfile="${DEFAULT_SSL_BASE}/serial"
+
+  echo "Generating CA key"
+  openssl genrsa -out $cakey 2048
+  if [ $? -ne 0 ]; then exit 1 ; fi
+
+  echo "Generating CA certificate"
+  openssl req \
+          -x509 \
+          -new \
+          -nodes \
+          -subj "/CN=${SERVER_HOSTNAME}" \
+          -key $cakey \
+          -sha256 \
+          -days 7300 \
+          -out $cacert
+  if [ $? -ne 0 ]; then exit 1 ; fi
+
+  echo "Generating openssl configuration"
+
+  cat <<EoCertConf>$confout
+subjectAltName = DNS:${SERVER_HOSTNAME},IP:127.0.0.1
+extendedKeyUsage = serverAuth
+EoCertConf
+
+  echo "Generating server key..."
+  openssl genrsa -out $keyout 2048
+  if [ $? -ne 0 ]; then exit 1 ; fi
+
+  echo "Generating server signing request..."
+  openssl req \
+               -subj "/CN=${SERVER_HOSTNAME}" \
+               -sha256 \
+               -new \
+               -key $keyout \
+               -out /tmp/server.csr
+  if [ $? -ne 0 ]; then exit 1 ; fi
+
+  echo "Generating server cert..."
+  openssl x509 \
+                -req \
+                -days 7300 \
+                -sha256 \
+                -in /tmp/server.csr \
+                -CA $cacert \
+                -CAkey $cakey \
+                -CAcreateserial \
+                -CAserial $serialfile \
+                -out $certout \
+                -extfile $confout
+  if [ $? -ne 0 ]; then exit 1 ; fi
+}
+
+
 # Source: https://github.com/sameersbn/docker-gitlab/
 map_uidgid() {
     USERMAP_ORIG_UID=$(id -u paperless)
@@ -58,7 +124,17 @@ migrations() {
 initialize() {
     map_uidgid
     set_permissions
+    generate_ssl
+    # first set up confd itself from env
+    echo "INFO: Setting up confd"
+    /usr/bin/confd -onetime -backend env -confdir /tmp/etc/confd
+    # now set up all config files initially
+    echo "INFO: Setting up config files"
+    /usr/bin/confd -onetime -confdir /etc/confd \
+	-config-file /etc/confd/confd.toml
+    echo "INFO: Initialization done"
     migrations
+    touch "$FIRST_START_FILE_URL"
 }
 
 install_languages() {
@@ -91,16 +167,14 @@ install_languages() {
 }
 
 
-if [[ "$1" != "/"* ]]; then
-    initialize
 
-    # Install additional languages if specified
-    if [[ ! -z "$PAPERLESS_OCR_LANGUAGES"  ]]; then
-        install_languages "$PAPERLESS_OCR_LANGUAGES"
-    fi
-
-    exec sudo -HEu paperless "/usr/src/paperless/src/manage.py" "$@"
+# main
+if [[ ! -e "$FIRST_START_FILE_URL" ]]; then
+	# Do stuff
+	initialize
 fi
 
-exec "$@"
+
+# Start paperless
+exec /usr/bin/supervisord -c /etc/supervisord.conf
 

@@ -370,19 +370,17 @@ if PAPERLESS_USE_LDAP:
     # authenticate on every field not only on the dn (flexibility).
     AUTH_LDAP_USER_SEARCH = LDAPSearch(
         os.getenv("PAPERLESS_AUTH_LDAP_USER_DN"), ldap.SCOPE_SUBTREE,
-        os.getenv("PAPERLESS_AUTH_LDAP_USER_SEARCH_FILTER"),)
+        os.getenv("PAPERLESS_AUTH_LDAP_USER_SEARCH_FILTER", "(uid=%(user)s)"),)
 
     # Group search filter
-    if (not os.getenv("PAPERLESS_AUTH_LDAP_GROUP_DN") is None
-        and not os.getenv("PAPERLESS_AUTH_LDAP_GROUP_SEARCH_FILTER") is None
-            and not os.getenv("PAPERLESS_AUTH_LDAP_GROUP_TYPE") is None):
+    if (not os.getenv("PAPERLESS_AUTH_LDAP_GROUP_DN") is None):
         AUTH_LDAP_GROUP_SEARCH = LDAPSearch(
             os.getenv("PAPERLESS_AUTH_LDAP_GROUP_DN"), ldap.SCOPE_SUBTREE,
-            os.getenv("PAPERLESS_AUTH_LDAP_GROUP_SEARCH_FILTER"))
+            os.getenv("PAPERLESS_AUTH_LDAP_GROUP_SEARCH_FILTER", "(objectClass=groupOfNames)"))
         # For now only type groupofnames is implemented an it is also the
         # default. Depending on LDAP structure this has to be extended.
         # Should potentially also be configurable?
-        if os.getenv("PAPERLESS_AUTH_LDAP_GROUP_TYPE").lower() == "groupofnames":
+        if os.getenv("PAPERLESS_AUTH_LDAP_GROUP_TYPE", "groupOfNames").lower() == "groupofnames":
             AUTH_LDAP_GROUP_TYPE = GroupOfNamesType()
         else:
             AUTH_LDAP_GROUP_TYPE = GroupOfNamesType()
@@ -410,3 +408,4 @@ if PAPERLESS_USE_LDAP:
     # Cache distinguished names and group memberships for this amount of time
     # to reduce LDAP traffic. Default is 0 (do not cache at all).
     AUTH_LDAP_CACHE_TIMEOUT = os.getenv("PAPERLESS_AUTH_LDAP_CACHE_TIMEOUT", 0)
+

@@ -1,0 +1,17 @@
+[template]
+src = "confd.toml.tmpl"
+dest = "/etc/confd/confd.toml"
+keys = [
+    "/conf/confd/paperless/backend",
+    "/conf/confd/paperless/client_cakeys",
+    "/conf/confd/paperless/client_cert",
+    "/conf/confd/paperless/client_key",
+    "/conf/confd/paperless/nodes",
+    "/conf/confd/paperless/scheme",
+    "/conf/confd/paperless/srv_domain",
+    "/conf/confd/paperless/watch",
+    "/conf/confd/paperless/onetime",
+    "/conf/confd/paperless/interval",
+    "/conf/confd/paperless/log_level",
+]
+#reload_cmd = "supervisorctl restart confd"

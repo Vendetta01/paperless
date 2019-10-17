@@ -1,0 +1,34 @@
+#
+# LDAP Defaults
+#
+
+# See ldap.conf(5) for details
+# This file should be world readable but not world writable.
+
+#BASE	dc=example,dc=com
+#URI	ldap://ldap.example.com ldap://ldap-master.example.com:666
+
+#SIZELIMIT	12
+#TIMELIMIT	15
+#DEREF		never
+
+{{- $key := "/conf/ldap/base_dn"}}
+{{- if exists $key}}
+BASE {{getv $key}}
+{{- end}}
+
+{{- $key := "/conf/ldap/uri"}}
+{{- if exists $key}}
+URI {{getv $key}}
+{{- end}}
+
+{{- $key := "/conf/paperless/ldap/tls_reqcert"}}
+{{- if exists $key}}
+TLS_REQCERT {{getv $key}}
+{{- end}}
+
+{{- $key := "/conf/paperless/ldap/tls_cacert"}}
+{{- if exists $key}}
+TLS_CACERT {{getv $key}}
+{{- end}}
+

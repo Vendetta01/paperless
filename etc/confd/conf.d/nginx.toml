@@ -1,0 +1,9 @@
+[template]
+src = "nginx.conf.tmpl"
+dest = "/etc/nginx/conf.d/paperless.conf"
+keys = [
+    "/conf/paperless/ssl_crt",
+    "/conf/paperless/ssl_key",
+]
+check_cmd = "nginx -t -g 'pid /var/run/nginx.pid;'"
+reload_cmd = "supervisorctl restart nginx"
