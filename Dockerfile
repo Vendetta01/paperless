@@ -1,5 +1,4 @@
-#FROM alpine:edge
-FROM confd
+FROM npodewitz/confd:latest
 
 
 ENV PAPERLESS_CONSUMPTION_DIR /consume
@@ -90,5 +89,4 @@ EXPOSE 80 443
 # Mount volumes
 VOLUME ["/usr/src/paperless/data", "/usr/src/paperless/media", "/consume", "/export"]
 ENTRYPOINT ["/sbin/docker-entrypoint.sh"]
-#CMD ["--help"]
 
