@@ -6,7 +6,9 @@ DOCKER_RUN_ARGS:=-p 8080:8080
 VERSION:=
 
 
-.PHONY: build build-nc build-debug run debug debug-exec stop up up-debug clean ldap-test
+.PHONY: build build-nc build-debug run debug debug-exec stop up up-debug clean ldap-test all
+
+all: build
 
 ldap-test:
 	docker pull rroemhild/test-openldap

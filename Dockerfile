@@ -34,20 +34,11 @@ RUN mkdir -p /usr/src/paperless/src && \
     mkdir -p /var/www/ && \
     ln -s /usr/src/paperless/src /var/www/paperless && \
     ln -s /usr/src/paperless/static /var/www/paperless/static && \
-    ln -s /usr/src/paperless/media /var/www/paperless/media && \
-    mkdir -p /tmp/etc/confd/conf.d && \
-    mkdir -p /tmp/etc/confd/templates
+    ln -s /usr/src/paperless/media /var/www/paperless/media
 
 COPY src/ /usr/src/paperless/src/
 COPY data/ /usr/src/paperless/data/
 COPY media/ /usr/src/paperless/media/
-COPY scripts/ /usr/src/paperless/scripts/
-COPY etc/ /etc/
-RUN mv /etc/confd/conf.d/confd.toml /tmp/etc/confd/conf.d && \
-    mv /etc/confd/templates/confd.toml.tmpl /tmp/etc/confd/templates
-
-#COPY paperless.conf.example3 /etc/paperless.conf
-
 
 ##############################
 # Create consumption and export directory
@@ -71,15 +62,11 @@ RUN groupadd -g 1000 paperless && \
 
 
 ##############################
-# Setup entrypoint
-RUN cp /usr/src/paperless/scripts/docker-entrypoint.sh /sbin/docker-entrypoint.sh && \
-    chmod 755 /sbin/docker-entrypoint.sh &&\
-    cp /usr/src/paperless/scripts/create_searchable_pdf.py /usr/bin/ && \
-    chmod 755 /usr/bin/create_searchable_pdf.py && \
-    cp /usr/src/paperless/scripts/create_searchable_pdf.sh /usr/bin/ && \
-    chmod 755 /usr/bin/create_searchable_pdf.sh && \
-    cp /usr/src/paperless/scripts/environment.sh /usr/bin/ && \
-    chmod 755 /usr/bin/environment.sh
+# Copy entrypoint, scripts and config
+COPY scripts/* /usr/bin/
+COPY etc/ /etc/
+
+
 
 WORKDIR /usr/src/paperless/src
 
@@ -88,5 +75,5 @@ EXPOSE 80 443
 ##############################
 # Mount volumes
 VOLUME ["/usr/src/paperless/data", "/usr/src/paperless/media", "/consume", "/export"]
-ENTRYPOINT ["/sbin/docker-entrypoint.sh"]
+ENTRYPOINT ["/usr/bin/docker-entrypoint.sh"]
 
