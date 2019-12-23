@@ -6,7 +6,7 @@ DOCKER_RUN_ARGS:=-p 8080:8080
 VERSION:=
 
 
-.PHONY: build build-nc build-debug run debug debug-exec stop up up-debug clean ldap-test all
+.PHONY: build build-nc build-debug run debug debug-exec stop up up-debug clean ldap-test all tag push
 
 all: build
 
@@ -41,3 +41,10 @@ up-debug: clean build-debug run
 
 clean: stop
 	-docker rm -v ${CONTAINER_NAME}
+
+tag: build
+	docker tag ${IMAGE_NAME} ${REGISTRY}/${IMAGE_NAME}:latest
+
+push: tag
+	docker login
+	docker push ${REGISTRY}/${IMAGE_NAME}:latest

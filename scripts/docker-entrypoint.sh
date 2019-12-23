@@ -143,6 +143,20 @@ initialize() {
 
     migrations
 
+    # Install additional languages if specified
+    logit "INFO" "Installing additional lanugages"
+    if [[ ! -z "$PAPERLESS_OCR_LANGUAGES" ]]; then
+	logit "DEBUG" "Installung languages from env: $PAPERLESS_OCR_LANGUAGES"
+        install_languages "$PAPERLESS_OCR_LANGUAGES"
+    else
+        # Get OCR_LANGUAGES from config file
+	OCR_LANGUAGES=$(sed -n 's/^PAPERLESS_OCR_LANGUAGES=\(.*\)$/\1/p' /etc/paperless.conf)
+	if [[ ! -z "$OCR_LANGUAGES" ]]; then
+            logit "DEBUG" "Installung languages from conf: $OCR_LANGUAGES"
+            install_languages "$OCR_LANGUAGES"
+	fi
+    fi
+
     touch "$FIRST_START_FILE_URL"
     logit "INFO" "Initialization done"
 }
