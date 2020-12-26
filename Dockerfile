@@ -20,8 +20,15 @@ RUN cd /usr/src/paperless/ && \
     rm /etc/nginx/conf.d/default.conf && \
     apk add --update --no-cache --virtual .build-deps python3-dev poppler-dev \
       postgresql-dev build-base musl-dev zlib-dev jpeg-dev openldap-dev && \
+# Install python dependencies
+    python3 -m ensurepip && \
+    rm -r /usr/lib/python*/ensurepip && \
+    cd /usr/src/paperless && \
+    pip3 install --upgrade pip pipenv && \
+    pipenv install --system --deploy && \
     pip3 install --upgrade pip && \
     pip3 install --no-cache-dir -r requirements.txt && \
+#
     apk del .build-deps
 
 

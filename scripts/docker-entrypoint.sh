@@ -77,7 +77,7 @@ map_uidgid() {
     if [[ ${USERMAP_NEW_UID} != "${USERMAP_ORIG_UID}" || ${USERMAP_NEW_GID} != "${USERMAP_ORIG_GID}" ]]; then
         logit "INFO" "Mapping UID and GID for paperless:paperless to $USERMAP_NEW_UID:$USERMAP_NEW_GID"
         usermod -u "${USERMAP_NEW_UID}" paperless
-        groupmod -g "${USERMAP_NEW_GID}" paperless
+        groupmod -o -g "${USERMAP_NEW_GID}" paperless
     fi
 }
 
