@@ -7,7 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('documents', '9001_folder_file_number'),
-        ('documents', '0022_auto_20181007_1420'),
+        ('documents', '0023_document_current_filename'),
     ]
 
     operations = [

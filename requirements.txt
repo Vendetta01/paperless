@@ -37,9 +37,8 @@ jinja2==2.10.1
 langdetect==1.0.7
 markupsafe==1.1.1
 more-itertools==7.2.0
-packaging==19.1
 pdf2image==1.4.1
-packaging==19.1
+packaging==20.8
 pdftotext==2.1.1
 pillow==5.4.1
 pluggy==0.12.0
@@ -65,7 +64,7 @@ python-levenshtein==0.12.0
 pytz==2018.9
 regex==2019.6.8
 requests==2.22.0
-six==1.12.0
+six==1.15.0
 snowballstemmer==1.9.0
 sphinx==1.8.3
 sphinxcontrib-applehelp==1.0.1

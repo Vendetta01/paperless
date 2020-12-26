@@ -3,32 +3,21 @@ FROM npodewitz/confd:latest
 
 ENV PAPERLESS_CONSUMPTION_DIR /consume
 ENV PAPERLESS_EXPORT_DIR /export
-ENV GHOSTSCRIPT_APK ghostscript-9.26-r2.apk
 
 
 ##############################
 # Install dependencies
 COPY requirements.txt /usr/src/paperless/
-#COPY aports/main/ghostscript/$GHOSTSCRIPT_APK /tmp/
 RUN cd /usr/src/paperless/ && \
     apk add --update --no-cache python3 sudo imagemagick \
       gnupg bash curl poppler unpaper optipng libmagic libpq tiff zlib \
       shadow tesseract-ocr poppler-utils nginx supervisor openssl \
-      ghostscript && \
-#    apk add --no-cache --allow-untrusted /tmp/$GHOSTSCRIPT_APK && \
-#    rm /tmp/$GHOSTSCRIPT_APK /etc/nginx/conf.d/default.conf && \
+      ghostscript py-pip && \
     rm /etc/nginx/conf.d/default.conf && \
     apk add --update --no-cache --virtual .build-deps python3-dev poppler-dev \
       postgresql-dev build-base musl-dev zlib-dev jpeg-dev openldap-dev && \
-# Install python dependencies
-    python3 -m ensurepip && \
-    rm -r /usr/lib/python*/ensurepip && \
-    cd /usr/src/paperless && \
-    pip3 install --upgrade pip pipenv && \
-    pipenv install --system --deploy && \
-    pip3 install --upgrade pip && \
+    pip3 install --upgrade pip wheel && \
     pip3 install --no-cache-dir -r requirements.txt && \
-#
     apk del .build-deps
 
 
