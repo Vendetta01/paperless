@@ -22,6 +22,11 @@ keys = [
     "/conf/paperless/auth_ldap_group_dn",
     "/conf/paperless/auth_ldap_group_dn_active",
     "/conf/paperless/auth_ldap_require_group",
+    "/conf/paperless/dbuser",
+    "/conf/paperless/dbpass",
+    "/conf/paperless/dbname",
+    "/conf/paperless/dbhost",
+    "/conf/paperless/dbport",
 ]
 reload_cmd = "supervisorctl restart paperless"
 

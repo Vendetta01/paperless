@@ -169,3 +169,28 @@ PAPERLESS_AUTH_LDAP_REQUIRE_GROUP={{getv $key}}
 #PAPERLESS_AUTH_LDAP_CACHE_TIMEOUT=0
 
 
+# Configure database
+{{- $key := "/conf/paperless/dbhost"}}
+{{- if exists $key}}
+PAPERLESS_DBHOST={{getv $key}}
+{{- end}}
+
+{{- $key := "/conf/paperless/dbport"}}
+{{- if exists $key}}
+PAPERLESS_DBPORT={{getv $key}}
+{{- end}}
+
+{{- $key := "/conf/paperless/dbname"}}
+{{- if exists $key}}
+PAPERLESS_DBNAME={{getv $key}}
+{{- end}}
+
+{{- $key := "/conf/paperless/dbuser"}}
+{{- if exists $key}}
+PAPERLESS_DBUSER={{getv $key}}
+{{- end}}
+
+{{- $key := "/conf/paperless/dbpass"}}
+{{- if exists $key}}
+PAPERLESS_DBPASS={{getv $key}}
+{{- end}}

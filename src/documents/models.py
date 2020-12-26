@@ -439,11 +439,12 @@ class Document(models.Model):
         next_free_fn = 1
         try:
             next_free_fn = Document.objects.filter(
-                    foldernumber=folernumber).latest(
+                    foldernumber=foldernumber).latest(
                             'filenumber').filenumber + 1
         except Exception as e:
             next_free_fn = 1
         return next_free_fn
+
     def set_filename(self, filename):
         if os.path.isfile(Document.filename_to_path(filename)):
             self.filename = filename
