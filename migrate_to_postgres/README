@@ -1,0 +1,6 @@
+README
+
+-> install pgloader in container
+-> copy sqlite-db and sqlite.loader into db container
+-> pgloader sqlite.load
+

@@ -1,0 +1,6 @@
+load database
+	from '/tmp/db.sqlite3'
+	into pgsql://paperless@localhost/paperless-db
+
+with include drop, create tables, create indexes, reset sequences
+set work_mem to '16MB', maintenance_work_mem to '512 MB';
